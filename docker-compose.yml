@@ -1,55 +1,152 @@
+# Docker Compose file version define kar rahe hain.
+# Ye batata hai ki compose file kis syntax aur features ko support karegi.
 version: '3.8'
 
+# Services section me hum application ke saare containers define karte hain.
 services:
+
+  # MongoDB Database Service
   mongodb:
+
+    # Docker Hub se latest MongoDB image pull karega.
     image: mongo:latest
+
+    # Container ko custom naam de rahe hain.
+    # Isse docker ps me identify karna easy ho jata hai.
     container_name: easyshop-mongodb
+
+    # Port Mapping
+    # Left side Host Machine ka port hai.
+    # Right side Container ka port hai.
+    # Ab localhost:27017 se MongoDB access kar sakte hain.
     ports:
       - "27017:27017"
+
+    # Data Persistence ke liye Volume use kar rahe hain.
+    # Agar container delete bhi ho jaye to database data safe rahega.
     volumes:
       - mongodb_data:/data/db
+
+    # Health Check Docker ko batata hai ki service healthy hai ya nahi.
+    # MongoDB start hone ke baad ping command run karke verify karega.
     healthcheck:
+
+      # mongosh ke through database ko ping kar rahe hain.
+      # Agar response mil gaya to container healthy mana jayega.
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+
+      # Har 10 second me health check run hoga.
       interval: 10s
+
+      # Agar 5 second me response nahi aaya to fail mana jayega.
       timeout: 5s
+
+      # Maximum 5 baar retry karega.
       retries: 5
+
+      # Container start hone ke baad 30 second wait karega.
+      # Isse MongoDB ko properly start hone ka time mil jata hai.
       start_period: 30s
+
+    # Is service ko custom Docker network me connect kar rahe hain.
     networks:
       - easyshop-network
 
+
+  # Database Migration Service
   migration:
+
+    # Image pull nahi kar rahe.
+    # Apni custom Dockerfile se image build karenge.
     build:
+
+      # Current directory build context hogi.
+      # Docker ko yahin se files milengi.
       context: .
+
+      # Migration ke liye alag Dockerfile use kar rahe hain.
       dockerfile: scripts/Dockerfile.migration
+
+    # Container ka custom naam.
     container_name: easyshop-migration
+
+    # Environment variables .env.local file se load karenge.
+    # Jaise Database URL, API Keys, Secrets etc.
     env_file:
       - .env.local
+
+    # Migration tabhi start hogi jab MongoDB healthy ho jaye.
+    # Sirf container start hona kaafi nahi hai.
+    # Database fully ready bhi hona chahiye.
     depends_on:
       mongodb:
         condition: service_healthy
+
+    # Same network me connect kar rahe hain
+    # taki migration service MongoDB se communicate kar sake.
     networks:
       - easyshop-network
 
+
+  # Main Application Service (Next.js App)
   app:
+
+    # Application ki image local Dockerfile se build hogi.
     build:
+
+      # Current project directory build context hai.
       context: .
+
+      # Main application wali Dockerfile use hogi.
       dockerfile: Dockerfile
+
+    # Application container ka custom naam.
     container_name: easyshop
+
+    # Port Mapping
+    # Browser me localhost:3000 open karoge
+    # to application access ho jayegi.
     ports:
       - "3000:3000"
+
+    # Environment variables load kar rahe hain.
     env_file:
       - .env.local
+
+    # App tabhi start hogi jab migration successfully complete ho jaye.
+    # Isse ensure hota hai ki database schema pehle se ready ho.
     depends_on:
       migration:
         condition: service_completed_successfully
+
+    # Same network use kar rahe hain taki app MongoDB se baat kar sake.
     networks:
       - easyshop-network
+
+    # Container crash ho jaye ya server restart ho jaye
+    # to Docker automatically container ko restart karega.
+    # Jab tak manually stop nahi karte tab tak service chalti rahegi.
     restart: unless-stopped
 
+
+# Custom Docker Network
+# Is network ke andar saare containers ek dusre se
+# service name ke through communicate kar sakte hain.
 networks:
+
   easyshop-network:
+
+    # Docker network ka actual naam.
     name: easyshop-network
 
+
+# Named Volumes
+# Database ka persistent data yahan store hoga.
+# Container delete hone ke baad bhi data safe rahega.
 volumes:
+
   mongodb_data:
+
+    # Volume ka actual naam.
     name: mongodb_data
+    

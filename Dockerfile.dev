@@ -1,40 +1,93 @@
+# ==============================
+# Stage 1: Builder Stage
+# ==============================
+# Is stage ka kaam application ko build karna hai.
+# Yahan source code ko production-ready files me convert kiya jata hai.
+# Final image me ye stage include nahi hoti, isliye image size chhota rehta hai.
 FROM node:18-alpine AS builder
 
+# Container ke andar /app naam ki working directory create kar rahe hain.
+# Iske baad saare commands isi folder ke andar execute honge.
 WORKDIR /app
 
-# Install build dependencies
+# Kuch npm packages native modules use karte hain.
+# Unko compile karne ke liye Python, Make aur G++ ki zarurat padti hai.
+# Alpine Linux me apk package manager hota hai.
+# --no-cache use karne se unnecessary cache save nahi hota aur image size kam rehta hai.
 RUN apk add --no-cache python3 make g++
 
-# Copy package files
+# package.json aur package-lock.json files copy kar rahe hain.
+# In files me project ki dependencies ki information hoti hai.
 COPY package*.json ./
+
+# npm ci exact dependencies install karta hai
+# jo package-lock.json me define hoti hain.
+# CI/CD aur production builds ke liye recommended command hai.
 RUN npm ci
 
-# Copy source code
+# Ab project ka pura source code container ke andar copy kar rahe hain.
 COPY . .
 
-# Set environment variable to skip telemetry
+# Next.js telemetry disable kar rahe hain.
+# Telemetry anonymous usage data Next.js team ko bhejti hai.
+# Production aur CI/CD environments me ise generally disable kiya jata hai.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Build the application
+# Build process ke dauran API URL define kar rahe hain.
+# NEXT_PUBLIC prefix wali variables browser side par bhi accessible hoti hain.
 ENV NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# Next.js application ka production build create kar rahe hain.
+# Is command ke baad .next folder generate hoga.
 RUN npm run build
 
-# Production image
+
+# ==============================
+# Stage 2: Production Stage
+# ==============================
+# Ye final runtime image hai.
+# Is stage me sirf wahi files rakhi jaati hain jo application run karne ke liye zaruri hain.
+# Isse image lightweight aur secure banti hai.
 FROM node:18-alpine AS runner
+
+# Application ke liye working directory set kar rahe hain.
 WORKDIR /app
 
+# Application ko production mode me run karne ke liye environment variable set kar rahe hain.
+# Isse performance optimizations enable ho jati hain.
 ENV NODE_ENV production
+
+# Production stage me bhi telemetry disable rakhi gayi hai.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Copy necessary files from builder
+# Builder stage se Next.js configuration file copy kar rahe hain.
+# Application ko runtime me is configuration ki zarurat pad sakti hai.
 COPY --from=builder /app/next.config.js ./
+
+# Public folder copy kar rahe hain.
+# Isme images, favicon aur static assets hote hain.
 COPY --from=builder /app/public ./public
+
+# Standalone build copy kar rahe hain.
+# Isme server.js aur required runtime dependencies hoti hain.
+# Standalone mode image ko kaafi lightweight bana deta hai.
 COPY --from=builder /app/.next/standalone ./
+
+# Static assets copy kar rahe hain.
+# Browser CSS, JavaScript aur other frontend files yahin se load karta hai.
 COPY --from=builder /app/.next/static ./.next/static
 
+# Docker ko batate hain ki application container ke andar
+# port 3000 par requests listen karegi.
 EXPOSE 3000
 
+# Application ka runtime port define kar rahe hain.
 ENV PORT 3000
+
+# 0.0.0.0 ka matlab hai application container ke sabhi network interfaces par listen karegi.
+# Agar localhost use karte to container ke bahar se access nahi ho pata.
 ENV HOSTNAME "0.0.0.0"
 
+# Container start hote hi ye command execute hogi.
+# server.js Next.js standalone server ko run karega.
 CMD ["node", "server.js"]
