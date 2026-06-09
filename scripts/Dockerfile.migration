@@ -1,25 +1,100 @@
-# Use Node.js 18 Alpine as base
+# ==========================================
+# Base Image
+# ==========================================
+
+# Node.js 18 ka lightweight Alpine version use kar rahe hain.
+# Alpine image chhoti hoti hai, isliye image size kam rehta hai.
 FROM node:18-alpine
 
-# Set working directory
+
+# ==========================================
+# Working Directory
+# ==========================================
+
+# Container ke andar /app naam ki working directory create kar rahe hain.
+# Iske baad saare commands isi folder ke andar execute honge.
 WORKDIR /app
 
-# Install necessary build dependencies
+
+# ==========================================
+# Build Dependencies Install
+# ==========================================
+
+# Kuch Node.js packages native code compile karte hain.
+# Unko install karne ke liye Python, Make aur G++ ki zarurat padti hai.
+# Alpine Linux me package manager ka naam apk hota hai.
+# --no-cache use karne se unnecessary cache store nahi hota.
 RUN apk add --no-cache python3 make g++
 
-# Copy package files and tsconfig
+
+# ==========================================
+# Project Configuration Files Copy
+# ==========================================
+
+# package.json aur package-lock.json dependencies ki list rakhte hain.
+# tsconfig.json TypeScript compiler configuration rakhta hai.
 COPY package*.json tsconfig.json ./
 
-# Copy scripts and data
+
+# ==========================================
+# Migration Scripts Copy
+# ==========================================
+
+# Scripts folder copy kar rahe hain.
+# Is folder me migration aur database related scripts rakhi hoti hain.
 COPY scripts ./scripts
+
+
+# ==========================================
+# Database Files Copy
+# ==========================================
+
+# .db folder ko container ke andar copy kar rahe hain.
+# Agar migration process ko local database files ki zarurat ho
+# to wo yahan available rahengi.
 COPY .db ./.db
 
-# Install dependencies
+
+# ==========================================
+# Dependencies Install
+# ==========================================
+
+# package.json me defined saari dependencies install karega.
+# Migration script ko run karne ke liye ye required hain.
 RUN npm install
+
+
+# Mongoose ke TypeScript type definitions install kar rahe hain.
+# Ye TypeScript ko Mongoose objects samajhne me help karta hai.
+# Isse better autocomplete aur type checking milti hai.
 RUN npm install --save-dev @types/mongoose
 
-# Set environment variables
+
+# ==========================================
+# Environment Variables
+# ==========================================
+
+# Development mode set kar rahe hain.
+# Migration scripts ke liye development environment use ho raha hai.
 ENV NODE_ENV=development
 
-# Command to run migration
+
+# ==========================================
+# Default Command
+# ==========================================
+
+# Container start hote hi migration script execute hogi.
+#
+# npx
+# → Local node_modules ke packages run karne ke liye.
+#
+# ts-node
+# → TypeScript file ko directly execute karta hai
+#   bina pehle JavaScript me convert kiye.
+#
+# --project
+# → Kaunsa tsconfig use karna hai wo specify karta hai.
+#
+# scripts/migrate-data.ts
+# → Actual migration script jo database me changes karegi.
 CMD ["npx", "ts-node", "--project", "scripts/tsconfig.json", "scripts/migrate-data.ts"]
