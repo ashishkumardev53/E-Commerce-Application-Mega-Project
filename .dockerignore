@@ -1,30 +1,93 @@
-# Dependencies
+# ==========================================
+# Node.js Dependencies
+# ==========================================
+
+# Local machine par install hui dependencies.
+# Docker container ke andar dependencies dobara install hongi,
+# isliye node_modules ko copy karne ki zarurat nahi hoti.
+# Isse image size bahut kam ho jata hai.
 node_modules
+
+# NPM debugging aur error logs.
+# Ye sirf troubleshooting ke liye hote hain,
+# application chalane ke liye zaruri nahi hote.
 npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# Next.js build output
+
+# ==========================================
+# Next.js Build Files
+# ==========================================
+
+# Next.js build output folder.
+# Docker build ke andar fresh build generate hogi,
+# isliye local .next folder ko copy nahi karte.
 .next
 
-# Environment variables
+
+# ==========================================
+# Environment Variables
+# ==========================================
+
+# Sensitive configuration files.
+# Inme Database URLs, API Keys, Secrets wagaira ho sakte hain.
+# Security reasons ki wajah se image ke andar copy nahi karte.
 .env
 .env.local
 .env.development
 .env.test
 .env.production
 
-# Version control
+
+# ==========================================
+# Git / Version Control Files
+# ==========================================
+
+# Git repository metadata.
+# Source control ke liye use hota hai,
+# application run karne ke liye zaruri nahi.
 .git
+
+# Git ignore rules file.
+# Docker image ke andar iski zarurat nahi hoti.
 .gitignore
 
-# Docker
+
+# ==========================================
+# Docker Related Files
+# ==========================================
+
+# Dockerfile build ke liye use hoti hai.
+# Build complete hone ke baad image ke andar iski zarurat nahi rehti.
 Dockerfile
+
+# Docker Compose local environment manage karta hai.
+# Runtime container ke andar iska koi use nahi hota.
 docker-compose.yml
+
+# Current ignore rules file ko bhi image me copy nahi karna.
 .dockerignore
 
-# Development files
+
+# ==========================================
+# Development & Documentation Files
+# ==========================================
+
+# Project documentation.
+# Developers ke reference ke liye hoti hai.
+# Application run karne ke liye required nahi.
 README.md
+
+# Saari Markdown files ignore kar do.
+# Documentation image size unnecessarily badha sakti hai.
 *.md
+
+# VS Code editor settings.
+# Sirf local development environment ke liye.
 .vscode
+
+# IntelliJ / WebStorm editor settings.
+# Team ke alag-alag editors ho sakte hain,
+# isliye image me include nahi karte.
 .idea
