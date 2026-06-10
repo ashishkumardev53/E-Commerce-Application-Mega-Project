@@ -49,13 +49,13 @@ data:
   # Frontend API URL
   #
   # Browser API requests isi endpoint par bhejega.
-  NEXT_PUBLIC_API_URL: "https://easyshop.letsdeployit.com/api"
+  NEXT_PUBLIC_API_URL: "https://demo.com/api"
 
 
   # NextAuth Authentication URL
   #
   # Authentication callbacks ke liye use hota hai.
-  NEXTAUTH_URL: "https://easyshop.letsdeployit.com/"
+  NEXTAUTH_URL: "https://demo.com/"
 
 
   # WARNING ⚠️

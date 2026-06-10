@@ -47,7 +47,7 @@ spec:
         # Migration Docker Image
         #
         # Ye wahi image hai jo Jenkins pipeline build karti hai.
-        image: trainwithshubham/easyshop-migration:1
+        image: ashishkuardev53/easyshop-migration:1
 
 
         # Hamesha latest image pull karo.

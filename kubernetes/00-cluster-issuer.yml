@@ -30,7 +30,7 @@ spec:
     # Real SSL certificates yahin se issue honge.
     #
     # Production website ke liye use hota hai.
-    server: https://acme-v02.api.letsencrypt.org/directory
+    server: https://demo.org/directory
 
     # Email Address
     #

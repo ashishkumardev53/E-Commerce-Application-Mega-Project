@@ -91,7 +91,7 @@ spec:
         # Docker Image
         #
         # Jenkins Pipeline isi image ko build aur push karti hai.
-        image: trainwithshubham/easyshop-app:1
+        image: ashishkuardev53/easyshop-app:1
 
 
         # Har deployment par latest image pull karega.
