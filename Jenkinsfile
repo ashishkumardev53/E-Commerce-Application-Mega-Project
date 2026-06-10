@@ -27,10 +27,10 @@ pipeline {
     environment {
 
         // Main Application Docker Image Name
-        DOCKER_IMAGE_NAME = 'trainwithshubham/easyshop-app'
+        DOCKER_IMAGE_NAME = 'ashishkumardev53/easyshop-app'
 
         // Migration Container Docker Image Name
-        DOCKER_MIGRATION_IMAGE_NAME = 'trainwithshubham/easyshop-migration'
+        DOCKER_MIGRATION_IMAGE_NAME = 'ashishkumardev53/easyshop-migration'
 
         // Jenkins Build Number ko Docker Tag bana rahe hain.
         //
@@ -82,7 +82,7 @@ pipeline {
 
                     // GitHub se source code download karenge.
                     clone(
-                        "https://github.com/LondheShubham153/tws-e-commerce-app.git",
+                        "https://github.com/ashishkumardev53/tws-e-commerce-app.git",
                         "master"
                     )
                 }
@@ -289,7 +289,7 @@ pipeline {
 
                         gitUserName: 'Jenkins CI',
 
-                        gitUserEmail: 'shubhamnath5@gmail.com'
+                        gitUserEmail: 'ashishkumardev53@gmail.com'
                     )
                 }
             }
