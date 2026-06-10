@@ -1,7 +1,44 @@
+
+# API Version
+#
+# Core Kubernetes resources ke liye v1 use hota hai.
 apiVersion: v1
+
+
+# Resource Type
+#
+# Namespace ek logical partition hota hai.
+#
+# Namespace ka use resources ko organize aur isolate
+# karne ke liye kiya jata hai.
 kind: Namespace
+
+
 metadata:
+
+  # Namespace ka naam
+  #
+  # Is namespace ke andar:
+  # - Pods
+  # - Services
+  # - Deployments
+  # - Secrets
+  # - ConfigMaps
+  #
+  # Create kiye jayenge.
   name: easyshop
+
+
+  # Labels additional metadata hote hain.
+  #
+  # Labels filtering aur management me help karte hain.
   labels:
+
+    # Application Name Label
     name: easyshop
+
+    # Environment Label
+    #
+    # Ye batata hai ki ye production environment hai.
     environment: production
+

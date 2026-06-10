@@ -1,15 +1,60 @@
+# Resource Type
+#
+# ClusterIssuer ek cluster-wide certificate issuer hota hai.
+# Isse cluster ke kisi bhi namespace se certificates issue kiye ja sakte hain.
+
 kind: ClusterIssuer
+
+# API Version
+#
+# Cert-Manager ke CRDs (Custom Resource Definitions)
+# ka version specify kar rahe hain.
 apiVersion: cert-manager.io/v1
 
 metadata:
+  # ClusterIssuer ka naam
+  #
+  # Baad me Certificate resource isi naam ko reference karega.
   name: letsencrypt-prod
+
 spec:
+  # ACME Protocol Configuration
+  #
+  # ACME = Automated Certificate Management Environment
+  #
+  # Let's Encrypt isi protocol ka use karta hai
+  # certificate issue aur renew karne ke liye.
   acme:
+    # Let's Encrypt Production Server
+    #
+    # Real SSL certificates yahin se issue honge.
+    #
+    # Production website ke liye use hota hai.
     server: https://acme-v02.api.letsencrypt.org/directory
+
+    # Email Address
+    #
+    # Certificate expiry alerts
+    # aur account notifications yahan aayengi.
     email: ashishkumardev53@gmail.com
+
+    # Private Key Secret
+    #
+    # Cert Manager ek secret create karega
+    # jisme Let's Encrypt account ki private key store hogi.
     privateKeySecretRef:
       name: letsencrypt-prod-key
+
+    # Challenge Verification Method
+    #
+    # Let's Encrypt ko verify karna hota hai
+    # ki domain sach me tumhara hai.
+    #
+    # Uske liye HTTP01 challenge use kar rahe hain.
+
     solvers:
-    - http01:
-        ingress:
-          class: nginx
+      - http01:
+          ingress:
+            # NGINX Ingress Controller use hoga
+            # challenge request handle karne ke liye.
+            class: nginx
