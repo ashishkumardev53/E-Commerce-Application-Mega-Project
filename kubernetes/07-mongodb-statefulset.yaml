@@ -1,35 +1,151 @@
+
+# ==================================================
+# API Version
+# ==================================================
+
+# apps/v1 Kubernetes workloads ke liye use hota hai.
+#
+# Deployment
+# StatefulSet
+# DaemonSet
+#
+# sab isi API group me aate hain.
 apiVersion: apps/v1
+
+
+# ==================================================
+# Resource Type
+# ==================================================
+
+# StatefulSet stateful applications ke liye use hota hai.
+#
+# Examples:
+# - MongoDB
+# - MySQL
+# - PostgreSQL
+# - Cassandra
+#
+# StatefulSet:
+# ✅ Stable Pod Name
+# ✅ Stable Storage
+# ✅ Ordered Startup
+# ✅ Ordered Shutdown
 kind: StatefulSet
+
+
 metadata:
+
+  # StatefulSet ka naam
   name: mongodb
+
+  # Namespace
   namespace: easyshop
+
+
 spec:
+
+  # Headless ya Normal Service Name
+  #
+  # StatefulSet is service ko use karke
+  # stable network identity provide karta hai.
   serviceName: mongodb-service
+
+
+  # Kitne MongoDB Pods run karne hain.
+  #
+  # Abhi sirf ek MongoDB instance.
   replicas: 1
+
+
+  # StatefulSet kin Pods ko manage karega.
   selector:
     matchLabels:
       app: mongodb
+
+
+  # ==================================================
+  # Pod Template
+  # ==================================================
+
   template:
+
     metadata:
+
       labels:
+
+        # Ye label Service ke selector se match karega.
         app: mongodb
+
+
     spec:
+
       containers:
+
         - name: mongodb
+
+          # MongoDB Official Image
           image: mongo:latest
+
+
+          # MongoDB Container Port
           ports:
             - containerPort: 27017
+
+
+          # ==========================================
+          # Storage Mount
+          # ==========================================
+
+          # PVC se storage attach kar rahe hain.
+          #
+          # MongoDB data:
+          #
+          # /data/db
+          #
+          # folder me store karega.
           volumeMounts:
+
             - name: mongodb-storage
+
               mountPath: /data/db
+
+
+          # ==========================================
+          # Resource Management
+          # ==========================================
+
           resources:
+
+            # Minimum Guaranteed Resources
             requests:
+
+              # 256 MB RAM reserve
               memory: "256Mi"
+
+              # 0.25 CPU reserve
               cpu: "250m"
+
+
+            # Maximum Resources
             limits:
+
+              # 512 MB RAM maximum
               memory: "512Mi"
+
+              # Half CPU maximum
               cpu: "500m"
+
+
+      # ==========================================
+      # Volume Configuration
+      # ==========================================
+
       volumes:
+
         - name: mongodb-storage
+
           persistentVolumeClaim:
+
+            # Pehle create ki hui PVC attach kar rahe hain.
             claimName: mongodb-pvc
+

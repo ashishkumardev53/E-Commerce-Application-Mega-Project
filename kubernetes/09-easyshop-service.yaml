@@ -1,13 +1,98 @@
+
+# ==================================================
+# API Version
+# ==================================================
+
+# Core Kubernetes Service resource
 apiVersion: v1
+
+
+# ==================================================
+# Resource Type
+# ==================================================
+
+# Service Pods ko stable networking provide karti hai.
+#
+# Service ka kaam:
+# - Stable IP
+# - Stable DNS Name
+# - Load Balancing
+# - Service Discovery
 kind: Service
+
+
 metadata:
+
+  # Service Name
+  #
+  # Cluster ke andar application
+  # easyshop-service naam se accessible hogi.
   name: easyshop-service
+
+  # Namespace
   namespace: easyshop
+
+
 spec:
+
+  # ==================================================
+  # Service Type
+  # ==================================================
+
+  # NodePort Service
+  #
+  # Cluster ke har worker node par ek port open karegi.
+  #
+  # External users:
+  #
+  # NodeIP:30000
+  #
+  # ke through application access kar sakte hain.
   type: NodePort
+
+
+  # ==================================================
+  # Port Mapping
+  # ==================================================
+
   ports:
-    - port: 80
+
+    -
+
+      # Service Port
+      #
+      # Cluster ke andar service port.
+      port: 80
+
+
+      # Container Port
+      #
+      # EasyShop application container
+      # port 3000 par chal rahi hai.
       targetPort: 3000
+
+
+      # External Node Port
+      #
+      # Worker Node par open hone wala port.
+      #
+      # Access:
+      #
+      # http://NodeIP:30000
       nodePort: 30000
+
+
+  # ==================================================
+  # Pod Selection
+  # ==================================================
+
   selector:
+
+    # Jin pods par
+    #
+    # app: easyshop
+    #
+    # label hoga
+    # un sab par traffic route hoga.
     app: easyshop
+

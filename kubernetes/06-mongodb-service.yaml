@@ -1,11 +1,67 @@
+
+# API Version
+#
+# Core Kubernetes resources ke liye v1 API use hoti hai.
 apiVersion: v1
+
+
+# Resource Type
+#
+# Service Kubernetes networking ka important component hai.
+#
+# Service ka kaam:
+# Pods ko stable network endpoint provide karna.
+#
+# Pod delete/recreate ho jaye tab bhi Service ka naam same rehta hai.
 kind: Service
+
+
 metadata:
+
+  # Service ka naam
+  #
+  # Application isi naam se MongoDB ko access karegi.
+  #
+  # Example:
+  # mongodb://mongodb-service:27017/easyshop
   name: mongodb-service
+
+  # Namespace jahan Service create hogi.
   namespace: easyshop
+
+
 spec:
+
+  # ==========================================
+  # Port Configuration
+  # ==========================================
+
   ports:
-    - port: 27017
+
+    - 
+
+      # Service Port
+      #
+      # Cluster ke andar clients isi port par connect karenge.
+      port: 27017
+
+
+      # Pod Port
+      #
+      # MongoDB container kis port par listen kar raha hai.
       targetPort: 27017
+
+
+  # ==========================================
+  # Pod Selection
+  # ==========================================
+
   selector:
+
+    # Jin Pods par ye label hoga:
+    #
+    # app: mongodb
+    #
+    # Un sab Pods ko Service automatically target karegi.
     app: mongodb
+
