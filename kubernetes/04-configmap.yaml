@@ -1,12 +1,79 @@
+
+# API Version
+#
+# Core Kubernetes resources ke liye v1 API use hoti hai.
 apiVersion: v1
+
+
+# Resource Type
+#
+# ConfigMap application configuration store karne ke liye use hota hai.
+#
+# Iska purpose:
+# Configuration ko application code se alag rakhna.
 kind: ConfigMap
+
+
 metadata:
+
+  # ConfigMap ka naam
+  #
+  # Deployment is ConfigMap ko reference karega.
   name: easyshop-config
+
+  # Namespace jahan ye ConfigMap create hogi.
   namespace: easyshop
+
+
+# ==================================================
+# Configuration Data
+# ==================================================
+
 data:
+
+  # MongoDB Connection String
+  #
+  # Application MongoDB se connect karne ke liye use karegi.
+  #
+  # mongodb-service
+  # Kubernetes Service ka naam hai.
   MONGODB_URI: "mongodb://mongodb-service:27017/easyshop"
+
+
+  # Environment Type
+  #
+  # Production mode enable karega.
   NODE_ENV: "production"
+
+
+  # Frontend API URL
+  #
+  # Browser API requests isi endpoint par bhejega.
   NEXT_PUBLIC_API_URL: "https://easyshop.letsdeployit.com/api"
+
+
+  # NextAuth Authentication URL
+  #
+  # Authentication callbacks ke liye use hota hai.
   NEXTAUTH_URL: "https://easyshop.letsdeployit.com/"
+
+
+  # WARNING ⚠️
+  #
+  # Ye Secret value hai.
+  # Isse ConfigMap me nahi rakhna chahiye.
+  #
+  # Better:
+  # Kubernetes Secret me store karo.
   NEXTAUTH_SECRET: "HmaFjYZ2jbUK7Ef+wZrBiJei4ZNGBAJ5IdiOGAyQegw="
+
+
+  # WARNING ⚠️
+  #
+  # JWT signing secret.
+  #
+  # ConfigMap me store karna security risk hai.
+  #
+  # Kubernetes Secret use karna chahiye.
   JWT_SECRET: "e5e425764a34a2117ec2028bd53d6f1388e7b90aeae9fa7735f2469ea3a6cc8c"
+

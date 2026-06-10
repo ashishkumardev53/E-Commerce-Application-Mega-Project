@@ -1,12 +1,82 @@
+
+# API Version
+#
+# Core Kubernetes resources ke liye v1 API use hoti hai.
 apiVersion: v1
+
+
+# Resource Type
+#
+# PersistentVolume (PV)
+#
+# Ye cluster level storage resource hota hai.
+# Is storage ko baad me PVC (PersistentVolumeClaim)
+# ke through Pods use karte hain.
 kind: PersistentVolume
+
+
 metadata:
+
+  # Persistent Volume ka naam
+  #
+  # PVC isi naam wale PV ko bind kar sakta hai.
   name: mongodb-pv
+
+
 spec:
+
+  # ==========================================
+  # Storage Capacity
+  # ==========================================
+
   capacity:
+
+    # Total storage size
+    #
+    # MongoDB maximum 5 GB tak data store kar sakta hai.
     storage: 5Gi
+
+
+  # ==========================================
+  # Access Mode
+  # ==========================================
+
   accessModes:
+
+    # ReadWriteOnce (RWO)
+    #
+    # Ek hi node volume ko read aur write kar sakta hai.
+    #
+    # MongoDB ke liye common configuration hai.
     - ReadWriteOnce
+
+
+  # ==========================================
+  # Storage Type
+  # ==========================================
+
   hostPath:
+
+    # Node machine ka actual folder.
+    #
+    # Kubernetes node ke andar:
+    #
+    # /data/mongodb
+    #
+    # me data physically store hoga.
     path: /data/mongodb
+
+
+  # ==========================================
+  # Reclaim Policy
+  # ==========================================
+
   persistentVolumeReclaimPolicy: Retain
+
+  # Retain ka matlab:
+  #
+  # Agar PVC delete bhi ho jaye
+  # tab bhi storage aur data delete nahi hoga.
+  #
+  # Data manually cleanup karna padega.
+

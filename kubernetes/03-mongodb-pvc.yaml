@@ -1,11 +1,63 @@
+
+# API Version
+#
+# Core Kubernetes resources ke liye v1 API use hoti hai.
 apiVersion: v1
+
+
+# Resource Type
+#
+# PVC = Persistent Volume Claim
+#
+# Ye Kubernetes se storage request karta hai.
+#
+# Pod directly PV use nahi karta.
+# Pod pehle PVC use karta hai.
+#
+# PVC automatically suitable PV se bind ho jata hai.
 kind: PersistentVolumeClaim
+
+
 metadata:
+
+  # PVC ka naam
+  #
+  # MongoDB Deployment isi naam ko reference karega.
   name: mongodb-pvc
+
+  # PVC easyshop namespace ke andar create hogi.
   namespace: easyshop
+
+
 spec:
+
+  # ==========================================
+  # Access Mode
+  # ==========================================
+
   accessModes:
+
+    # ReadWriteOnce
+    #
+    # Ek node volume ko read aur write kar sakta hai.
+    #
+    # MongoDB ke liye common setting hai.
     - ReadWriteOnce
+
+
+  # ==========================================
+  # Storage Request
+  # ==========================================
+
   resources:
+
     requests:
+
+      # Kubernetes se 5GB storage request kar rahe hain.
+      #
+      # Cluster available PVs me check karega.
+      #
+      # Agar koi 5Gi PV available hua
+      # to PVC automatically bind ho jayegi.
       storage: 5Gi
+
