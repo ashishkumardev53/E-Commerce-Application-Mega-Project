@@ -1,26 +1,125 @@
+
+# ==================================================
+# API Version
+# ==================================================
+
+# Networking resources ke liye use hota hai.
 apiVersion: networking.k8s.io/v1
+
+
+# ==================================================
+# Resource Type
+# ==================================================
+
+# Ingress external traffic ko Kubernetes Services tak route karta hai.
+#
+# Isse hum:
+# - Domain Names
+# - HTTPS
+# - SSL Certificates
+# - Path Based Routing
+#
+# configure kar sakte hain.
 kind: Ingress
+
+
 metadata:
+
+  # Ingress Name
   name: easyshop-ingress
+
+  # Namespace
   namespace: easyshop
+
+
+  # ==================================================
+  # NGINX Annotations
+  # ==================================================
+
   annotations:
+
+    # Maximum Upload Size
+    #
+    # User maximum 50 MB file upload kar sakta hai.
+    #
+    # Example:
+    # Product Images
+    # Profile Pictures
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+
+    # NGINX Ingress Controller use karo.
     kubernetes.io/ingress.class: "nginx"
+
+
+    # HTTP se HTTPS redirect.
+    #
+    # User agar:
+    #
+    # http://easyshop.letsdeployit.com
+    #
+    # open karega to automatically:
+    #
+    # https://easyshop.letsdeployit.com
+    #
+    # par redirect hoga.
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+
 spec:
+
+  # ==================================================
+  # TLS Configuration
+  # ==================================================
+
   tls:
+
   - hosts:
+
+    # SSL Certificate kis domain ke liye issue hoga.
     - easyshop.letsdeployit.com
-    secretName: easyshop-tls-secret  # Cert-Manager will manage this
+
+
+    # Kubernetes Secret
+    #
+    # Cert-Manager certificate issue karke
+    # isi secret me store karega.
+    secretName: easyshop-tls-secret
+
+
+  # ==================================================
+  # Routing Rules
+  # ==================================================
+
   rules:
+
   - host: easyshop.letsdeployit.com
+
     http:
+
       paths:
+
       - path: /
+
+        # Prefix ka matlab:
+        #
+        # /
+        # /login
+        # /products
+        # /cart
+        #
+        # sab same service me jayenge.
         pathType: Prefix
+
         backend:
+
           service:
+
+            # Request is service ko bhejo.
             name: easyshop-service
+
             port:
+
+              # Service ka port
               number: 80
 

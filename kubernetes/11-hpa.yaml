@@ -1,19 +1,94 @@
+
+# ==================================================
+# API Version
+# ==================================================
+
+# Autoscaling resources ke liye autoscaling/v2 use kar rahe hain.
+#
+# Ye latest version hai jo advanced metrics support karta hai.
 apiVersion: autoscaling/v2
+
+
+# ==================================================
+# Resource Type
+# ==================================================
+
+# HPA = Horizontal Pod Autoscaler
+#
+# Ye workload ko automatically scale karta hai.
+#
+# Scale Up
+# Scale Down
+#
+# CPU ya Memory usage ke basis par.
 kind: HorizontalPodAutoscaler
+
+
 metadata:
+
+  # HPA ka naam
   name: easyshop-hpa
+
+  # Namespace
   namespace: easyshop
+
+
 spec:
+
+  # ==================================================
+  # Target Resource
+  # ==================================================
+
   scaleTargetRef:
+
+    # Target resource ka API version.
     apiVersion: apps/v1
+
+    # Kis resource ko scale karna hai.
     kind: Deployment
+
+    # EasyShop Deployment
     name: easyshop
+
+
+  # ==================================================
+  # Minimum Replicas
+  # ==================================================
+
+  # Hamesha kam se kam 2 pods chalenge.
+  #
+  # High Availability maintain rahegi.
   minReplicas: 2
+
+
+  # ==================================================
+  # Maximum Replicas
+  # ==================================================
+
+  # Autoscaling maximum 5 pods tak ja sakti hai.
   maxReplicas: 5
+
+
+  # ==================================================
+  # Scaling Metrics
+  # ==================================================
+
   metrics:
+
     - type: Resource
+
       resource:
+
+        # CPU metric monitor kar rahe hain.
         name: cpu
+
         target:
+
+          # Percentage based scaling.
           type: Utilization
+
+          # Agar average CPU utilization
+          # 70% se zyada ho jaye
+          # to Kubernetes scale out karega.
           averageUtilization: 70
+

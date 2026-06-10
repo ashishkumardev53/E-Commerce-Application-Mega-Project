@@ -1,16 +1,81 @@
+
+# ==================================================
+# API Version
+# ==================================================
+
+# Kubernetes Jobs ke liye batch/v1 API use hoti hai.
 apiVersion: batch/v1
+
+
+# ==================================================
+# Resource Type
+# ==================================================
+
+# Job ek finite task execute karta hai.
+#
+# Deployment:
+# Hamesha chalti rehti hai.
+#
+# Job:
+# Ek baar ka task run karta hai aur complete ho jata hai.
 kind: Job
+
+
 metadata:
+
+  # Job Name
   name: db-migration
+
+  # Namespace
   namespace: easyshop
+
+
 spec:
+
+  # ==================================================
+  # Pod Template
+  # ==================================================
+
   template:
+
     spec:
+
       containers:
+
       - name: migration
+
+        # Migration Docker Image
+        #
+        # Ye wahi image hai jo Jenkins pipeline build karti hai.
         image: trainwithshubham/easyshop-migration:1
+
+
+        # Hamesha latest image pull karo.
         imagePullPolicy: Always
+
+
+        # ==================================================
+        # Environment Variables
+        # ==================================================
+
         env:
+
         - name: MONGODB_URI
+
+          # MongoDB Service Connection
+          #
+          # Migration script isi database se connect karegi.
           value: "mongodb://mongodb-service:27017/easyshop"
+
+
+      # ==================================================
+      # Restart Policy
+      # ==================================================
+
+      # Agar migration fail ho jaye:
+      # Kubernetes dobara try karega.
+      #
+      # Agar success ho jaye:
+      # Job Complete
       restartPolicy: OnFailure
+
